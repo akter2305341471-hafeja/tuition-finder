@@ -1,0 +1,6 @@
+body { background: #f5f7fb; }
+.navbar-brand { font-weight: 700; letter-spacing: .3px; }
+.hero { background: linear-gradient(135deg, #1e3c72, #2a5298); color: #fff; padding: 70px 0; }
+.card-hover { transition: box-shadow .15s; }
+.card-hover:hover { box-shadow: 0 .4rem 1rem rgba(0,0,0,.12); }
+.nav-tabs .nav-link { cursor: pointer; }
