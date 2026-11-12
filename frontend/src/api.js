@@ -15,7 +15,8 @@ api.interceptors.response.use(
   (err) => {
     const url = err.config?.url || "";
     if (err.response?.status === 401 && localStorage.getItem("token") && !url.includes("/auth/login")) {
-      localStorage.clear();
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
       window.location.href = "/login";
     }
     return Promise.reject(err);
