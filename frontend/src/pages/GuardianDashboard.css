@@ -362,25 +362,93 @@
   overflow-wrap: anywhere;
 }
 
-.guardian-reviewed {
-  padding: 10px;
-  margin-top: 13px;
-  border-radius: 8px;
-  background: #dcfce7;
-  color: #166534;
-  font-size: 12px;
-  font-weight: 700;
+/* =====================================
+   REVIEW & RATING - NEW COLOR DESIGN
+===================================== */
+
+/* Hired Tutor Card */
+.guardian-hired-card {
+  background: linear-gradient(135deg, #ffffff, #faf7ff);
+  border-color: #e9ddff;
 }
 
+/* Tutor Avatar */
+.guardian-tutor-avatar {
+  background: linear-gradient(135deg, #8b5cf6, #d946ef);
+}
+
+/* Review Form */
 .guardian-review-form {
   display: grid;
   gap: 8px;
   margin-top: 15px;
+  padding: 17px;
+  border: 1px solid #eadcff;
+  border-radius: 13px;
+  background: linear-gradient(135deg, #faf5ff, #fff7fc);
 }
 
+/* Review Form Labels */
+.guardian-review-form label {
+  color: #6b21a8;
+}
+
+/* Review Inputs */
+.guardian-review-form input,
+.guardian-review-form select {
+  border-color: #e5d4fa;
+  background: #fff;
+  color: #4c1d75;
+}
+
+.guardian-review-form input:focus,
+.guardian-review-form select:focus {
+  border-color: #a855f7;
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, .13);
+}
+
+/* Review Submit Button */
 .guardian-review-form .guardian-primary-btn {
   margin-top: 5px;
+  background: linear-gradient(110deg, #9333ea, #c026d3);
+  color: #fff;
 }
+
+.guardian-review-form .guardian-primary-btn:hover {
+  background: linear-gradient(110deg, #7e22ce, #a21caf);
+  box-shadow: 0 6px 14px rgba(147, 51, 234, .2);
+}
+
+/* Already Reviewed Message */
+.guardian-reviewed {
+  padding: 10px;
+  margin-top: 13px;
+  border: 1px solid #e9d5ff;
+  border-radius: 8px;
+  background: #f3e8ff;
+  color: #7e22ce;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Rating Stars */
+.guardian-review-form .text-warning {
+  color: #f59e0b !important;
+}
+
+/* Tutor Name */
+.guardian-hired-info h5 {
+  color: #6b21a8;
+}
+
+/* Tutor Information */
+.guardian-hired-info p {
+  color: #78658c;
+}
+
+/* =====================================
+   EMPTY STATE
+===================================== */
 
 .guardian-empty {
   padding: 35px 20px;
@@ -400,6 +468,10 @@
   color: #64748b;
   font-size: 13px;
 }
+
+/* =====================================
+   RESPONSIVE DESIGN
+===================================== */
 
 @media (max-width: 750px) {
   .guardian-post-grid,

@@ -1,141 +1,444 @@
+
 import { useEffect, useState } from "react";
 import api, { errMsg } from "../api";
 import { Badge, Msg, Tabs } from "../components/ui";
+import "./AdminDashboard.css";
 
-const STAT_LABELS = [
-  ["total_users", "Total users", "primary"], ["guardians", "Guardians", "info"], ["tutors", "Tutors", "info"],
-  ["total_posts", "Tuition posts", "secondary"], ["successful_matches", "Successful matches", "success"],
-  ["pending_tutors", "Tutors awaiting verification", "warning"], ["pending_posts", "Posts awaiting approval", "warning"],
-  ["total_reviews", "Reviews", "dark"],
-];
+function Users() {
+  const [users, setUsers] = useState([]);
+  const [q, setQ] = useState("");
+  const [role, setRole] = useState("ALL");
+  const [status, setStatus] = useState("ALL");
+  const [msg, setMsg] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [busyId, setBusyId] = useState(null);
+
+  const load = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get("/admin/users/", {
+        params: q.trim() ? { q: q.trim() } : {},
+      });
+      setUsers(Array.isArray(response.data) ? response.data : []);
+    } catch (err) {
+      setMsg({ type: "danger", text: errMsg(err) });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  const toggle = async (u) => {
+    const action = u.is_active ? "block" : "unblock";
+
+    if (!window.confirm(`Are you sure you want to ${action} ${u.first_name || u.username}?`)) {
+      return;
+    }
+
+    setBusyId(u.id);
+    setMsg(null);
+
+    try {
+      await api.post(`/admin/users/${u.id}/toggle-block/`);
+      setMsg({
+        type: "success",
+        text: `${u.first_name || u.username} has been ${u.is_active ? "blocked" : "unblocked"} successfully.`,
+      });
+      await load();
+    } catch (err) {
+      setMsg({ type: "danger", text: errMsg(err) });
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const filteredUsers = users.filter((u) => {
+    const roleMatch = role === "ALL" || u.role === role;
+    const statusMatch =
+      status === "ALL" ||
+      (status === "ACTIVE" ? u.is_active : !u.is_active);
+
+    return roleMatch && statusMatch;
+  });
+
+  const totalUsers = users.length;
+  const activeUsers = users.filter((u) => u.is_active).length;
+  const blockedUsers = users.filter((u) => !u.is_active).length;
+  const tutors = users.filter((u) => u.role === "TUTOR").length;
+  const guardians = users.filter((u) => u.role === "GUARDIAN").length;
+
+  const getInitial = (u) =>
+    (u.first_name || u.username || "U").charAt(0).toUpperCase();
+
+  return (
+    <div className="admin-users-page">
+      <div className="admin-users-header">
+        <div>
+          <span className="admin-eyebrow">ADMINISTRATION</span>
+          <h2>User Management</h2>
+          <p>View, manage and control all registered users.</p>
+        </div>
+        <div className="admin-header-icon">♙</div>
+      </div>
+
+      <Msg msg={msg} />
+
+      <div className="admin-user-stats">
+        <div className="admin-stat-card">
+          <div className="admin-stat-icon purple">♙</div>
+          <div>
+            <small>Total Users</small>
+            <h3>{totalUsers}</h3>
+          </div>
+        </div>
+
+        <div className="admin-stat-card">
+          <div className="admin-stat-icon green">✓</div>
+          <div>
+            <small>Active Users</small>
+            <h3>{activeUsers}</h3>
+          </div>
+        </div>
+
+        <div className="admin-stat-card">
+          <div className="admin-stat-icon red">⊘</div>
+          <div>
+            <small>Blocked Users</small>
+            <h3>{blockedUsers}</h3>
+          </div>
+        </div>
+
+        <div className="admin-stat-card">
+          <div className="admin-stat-icon blue">♧</div>
+          <div>
+            <small>Tutors / Guardians</small>
+            <h3>{tutors} / {guardians}</h3>
+          </div>
+        </div>
+      </div>
+
+      <div className="admin-user-content">
+        <div className="admin-user-content-heading">
+          <div>
+            <h4>Registered Users</h4>
+            <p>Manage account access and user information.</p>
+          </div>
+          <button className="admin-refresh-btn" onClick={load}>
+            ↻ Refresh
+          </button>
+        </div>
+
+        <form
+          className="admin-user-filters"
+          onSubmit={(e) => {
+            e.preventDefault();
+            load();
+          }}
+        >
+          <div className="admin-search-box">
+            <span>⌕</span>
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search name, username or email..."
+            />
+          </div>
+
+          <select value={role} onChange={(e) => setRole(e.target.value)}>
+            <option value="ALL">All Roles</option>
+            <option value="ADMIN">Admin</option>
+            <option value="GUARDIAN">Guardian</option>
+            <option value="TUTOR">Tutor</option>
+          </select>
+
+          <select value={status} onChange={(e) => setStatus(e.target.value)}>
+            <option value="ALL">All Status</option>
+            <option value="ACTIVE">Active</option>
+            <option value="BLOCKED">Blocked</option>
+          </select>
+
+          <button type="submit" className="admin-search-btn">
+            Search
+          </button>
+        </form>
+
+        <div className="admin-table-summary">
+          <span>Showing <b>{filteredUsers.length}</b> users</span>
+          <span>Account Management</span>
+        </div>
+
+        {loading ? (
+          <div className="admin-users-empty">
+            <div className="admin-loader"></div>
+            <p>Loading users...</p>
+          </div>
+        ) : filteredUsers.length === 0 ? (
+          <div className="admin-users-empty">
+            <div className="admin-empty-icon">♙</div>
+            <h5>No users found</h5>
+            <p>Try changing your search or filter.</p>
+          </div>
+        ) : (
+          <div className="admin-table-wrapper">
+            <table className="admin-user-table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {filteredUsers.map((u) => (
+                  <tr key={u.id}>
+                    <td>
+                      <div className="admin-user-name">
+                        <div className="admin-user-avatar">
+                          {getInitial(u)}
+                        </div>
+                        <div>
+                          <strong>{u.first_name || "No name"}</strong>
+                          <small>User ID: #{u.id}</small>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td>{u.username}</td>
+                    <td className="admin-email">{u.email}</td>
+
+                    <td>
+                      <span className={`admin-role role-${u.role?.toLowerCase()}`}>
+                        {u.role}
+                      </span>
+                    </td>
+
+                    <td>
+                      <span className={`admin-status ${u.is_active ? "active" : "blocked"}`}>
+                        <span className="admin-status-dot"></span>
+                        {u.is_active ? "Active" : "Blocked"}
+                      </span>
+                    </td>
+
+                    <td>
+                      <button
+                        className={`admin-toggle-btn ${u.is_active ? "block-btn" : "unblock-btn"}`}
+                        disabled={busyId === u.id || u.role === "ADMIN"}
+                        onClick={() => toggle(u)}
+                        title={u.role === "ADMIN" ? "Admin account cannot be changed here" : ""}
+                      >
+                        {busyId === u.id
+                          ? "Please wait..."
+                          : u.role === "ADMIN"
+                            ? "Admin"
+                            : u.is_active
+                              ? "Block"
+                              : "Unblock"}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default function AdminDashboard() {
+  const [tab, setTab] = useState("users");
+
+  return (
+    <div className="admin-dashboard">
+      <div className="admin-main-heading">
+        <div>
+          <span>CONTROL CENTER</span>
+          <h2>Admin Dashboard</h2>
+          <p>Manage your Tuition Finder platform.</p>
+        </div>
+      </div>
+
+      <Tabs
+        active={tab}
+        onChange={setTab}
+        tabs={[
+          ["users", "Manage Users"],
+          ["stats", "Overview"],
+          ["tutors", "Tutor Verification"],
+          ["posts", "Post Moderation"],
+        ]}
+      />
+
+      <div className="admin-tab-content">
+        {tab === "users" && <Users />}
+        {tab === "stats" && <div className="admin-existing-feature"><Stats /></div>}
+        {tab === "tutors" && <Tutors />}
+        {tab === "posts" && <Posts />}
+      </div>
+    </div>
+  );
+}
 
 function Stats() {
   const [s, setS] = useState(null);
-  useEffect(() => { api.get("/admin/dashboard/").then((r) => setS(r.data)); }, []);
+
+  useEffect(() => {
+    api.get("/admin/dashboard/")
+      .then((r) => setS(r.data))
+      .catch(() => setS({}));
+  }, []);
+
   if (!s) return <p>Loading...</p>;
+
+  const labels = [
+    ["total_users", "Total Users"],
+    ["guardians", "Guardians"],
+    ["tutors", "Tutors"],
+    ["total_posts", "Tuition Posts"],
+    ["successful_matches", "Successful Matches"],
+    ["pending_tutors", "Pending Tutors"],
+    ["pending_posts", "Pending Posts"],
+    ["total_reviews", "Reviews"],
+  ];
+
   return (
-    <div className="row">
-      {STAT_LABELS.map(([key, label, color]) => (
-        <div className="col-6 col-md-3 mb-3" key={key}>
-          <div className={`card text-white bg-${color}`}><div className="card-body text-center">
-            <div style={{ fontSize: 32, fontWeight: 700 }}>{s[key]}</div><small>{label}</small>
-          </div></div>
+    <div className="admin-user-stats">
+      {labels.map(([key, label]) => (
+        <div className="admin-stat-card" key={key}>
+          <div>
+            <small>{label}</small>
+            <h3>{s[key] ?? 0}</h3>
+          </div>
         </div>
       ))}
     </div>
   );
 }
 
-function Users() {
-  const [users, setUsers] = useState([]);
-  const [q, setQ] = useState("");
-  const [msg, setMsg] = useState(null);
-  const load = () => api.get("/admin/users/", { params: q ? { q } : {} }).then((r) => setUsers(r.data));
-  useEffect(() => { load(); }, []);
-
-  const toggle = async (u) => {
-    try {
-      await api.post(`/admin/users/${u.id}/toggle-block/`);
-      setMsg({ type: "success", text: `${u.first_name} was ${u.is_active ? "blocked" : "unblocked"}.` });
-      load();
-    } catch (err) { setMsg({ type: "danger", text: errMsg(err) }); }
-  };
-
-  return (
-    <>
-      <Msg msg={msg} />
-      <form className="form-inline mb-3" onSubmit={(e) => { e.preventDefault(); load(); }}>
-        <input className="form-control mr-2" placeholder="Search name / username / email" value={q} onChange={(e) => setQ(e.target.value)} />
-        <button className="btn btn-primary">Search</button>
-      </form>
-      <div className="table-responsive"><table className="table table-sm table-bordered bg-white">
-        <thead className="thead-light"><tr><th>Name</th><th>Username</th><th>Email</th><th>Role</th><th>Status</th><th></th></tr></thead>
-        <tbody>{users.map((u) => (
-          <tr key={u.id}>
-            <td>{u.first_name}</td><td>{u.username}</td><td>{u.email}</td><td>{u.role}</td>
-            <td><Badge status={u.is_active ? "ACTIVE" : "BLOCKED"} /></td>
-            <td><button className={`btn btn-sm ${u.is_active ? "btn-outline-danger" : "btn-outline-success"}`} onClick={() => toggle(u)}>{u.is_active ? "Block" : "Unblock"}</button></td>
-          </tr>))}
-        </tbody>
-      </table></div>
-    </>
-  );
-}
-
 function Tutors() {
   const [tutors, setTutors] = useState([]);
   const [filter, setFilter] = useState("PENDING");
-  const load = () => api.get("/admin/tutors/", { params: filter ? { verification: filter } : {} }).then((r) => setTutors(r.data));
-  useEffect(() => { load(); }, [filter]);
 
-  const verify = async (id, status) => { await api.post(`/admin/tutors/${id}/verify/`, { status }); load(); };
+  const load = () =>
+    api.get("/admin/tutors/", {
+      params: filter ? { verification: filter } : {},
+    }).then((r) => setTutors(r.data));
+
+  useEffect(() => {
+    load();
+  }, [filter]);
+
+  const verify = async (id, status) => {
+    try {
+      await api.post(`/admin/tutors/${id}/verify/`, { status });
+      load();
+    } catch (err) {
+      window.alert(errMsg(err));
+    }
+  };
 
   return (
-    <>
-      <div className="btn-group mb-3">
+    <div className="admin-user-content">
+      <h4>Tutor Verification</h4>
+      <div className="admin-filter-tabs">
         {["PENDING", "APPROVED", "REJECTED", ""].map((v) => (
-          <button key={v} className={`btn btn-sm ${filter === v ? "btn-primary" : "btn-outline-primary"}`} onClick={() => setFilter(v)}>{v || "ALL"}</button>
+          <button
+            key={v}
+            className={filter === v ? "selected" : ""}
+            onClick={() => setFilter(v)}
+          >
+            {v || "ALL"}
+          </button>
         ))}
       </div>
-      {tutors.length === 0 && <div className="alert alert-info">No tutors in this list.</div>}
+
+      {tutors.length === 0 && <p>No tutors in this list.</p>}
+
       {tutors.map((t) => (
-        <div className="card mb-2" key={t.id}><div className="card-body py-2 d-flex justify-content-between flex-wrap">
+        <div className="admin-simple-card" key={t.id}>
           <div>
-            <b>{t.name}</b> <Badge status={t.verification} />
-            <div className="small text-muted">{t.education || "No education"} · {t.subjects || "No subjects"} · {t.experience || "No experience"} · {t.area || "No area"}</div>
+            <strong>{t.name}</strong>
+            <p>{t.education || "No education"} · {t.subjects || "No subjects"} · {t.area || "No area"}</p>
+            <Badge status={t.verification} />
           </div>
           <div>
-            {t.verification !== "APPROVED" && <button className="btn btn-success btn-sm mr-1" onClick={() => verify(t.id, "APPROVED")}>Approve</button>}
-            {t.verification !== "REJECTED" && <button className="btn btn-outline-danger btn-sm" onClick={() => verify(t.id, "REJECTED")}>Reject</button>}
+            {t.verification !== "APPROVED" && (
+              <button onClick={() => verify(t.id, "APPROVED")}>Approve</button>
+            )}
+            {t.verification !== "REJECTED" && (
+              <button onClick={() => verify(t.id, "REJECTED")}>Reject</button>
+            )}
           </div>
-        </div></div>
+        </div>
       ))}
-    </>
+    </div>
   );
 }
 
 function Posts() {
   const [posts, setPosts] = useState([]);
   const [filter, setFilter] = useState("PENDING");
-  const load = () => api.get("/admin/posts/", { params: filter ? { approval: filter } : {} }).then((r) => setPosts(r.data));
-  useEffect(() => { load(); }, [filter]);
 
-  const moderate = async (id, action) => { await api.post(`/admin/posts/${id}/moderate/`, { action }); load(); };
+  const load = () =>
+    api.get("/admin/posts/", {
+      params: filter ? { approval: filter } : {},
+    }).then((r) => setPosts(r.data));
+
+  useEffect(() => {
+    load();
+  }, [filter]);
+
+  const moderate = async (id, action) => {
+    try {
+      await api.post(`/admin/posts/${id}/moderate/`, { action });
+      load();
+    } catch (err) {
+      window.alert(errMsg(err));
+    }
+  };
 
   return (
-    <>
-      <div className="btn-group mb-3">
+    <div className="admin-user-content">
+      <h4>Post Moderation</h4>
+      <div className="admin-filter-tabs">
         {["PENDING", "APPROVED", "REMOVED", ""].map((v) => (
-          <button key={v} className={`btn btn-sm ${filter === v ? "btn-primary" : "btn-outline-primary"}`} onClick={() => setFilter(v)}>{v || "ALL"}</button>
+          <button
+            key={v}
+            className={filter === v ? "selected" : ""}
+            onClick={() => setFilter(v)}
+          >
+            {v || "ALL"}
+          </button>
         ))}
       </div>
-      {posts.length === 0 && <div className="alert alert-info">No posts in this list.</div>}
-      {posts.map((p) => (
-        <div className="card mb-2" key={p.id}><div className="card-body py-2 d-flex justify-content-between flex-wrap">
-          <div>
-            <b>{p.title}</b> <Badge status={p.approval} />
-            <div className="small text-muted">By {p.guardian_name} · {p.student_class} · {p.subject} · {p.area} · ৳{p.salary}</div>
-          </div>
-          <div>
-            {p.approval !== "APPROVED" && <button className="btn btn-success btn-sm mr-1" onClick={() => moderate(p.id, "approve")}>Approve</button>}
-            {p.approval !== "REMOVED" && <button className="btn btn-outline-danger btn-sm" onClick={() => moderate(p.id, "remove")}>Remove</button>}
-          </div>
-        </div></div>
-      ))}
-    </>
-  );
-}
 
-export default function AdminDashboard() {
-  const [tab, setTab] = useState("stats");
-  return (
-    <>
-      <h3 className="mb-3">Admin Dashboard</h3>
-      <Tabs active={tab} onChange={setTab} tabs={[["stats", "Overview"], ["tutors", "Tutor Verification"], ["posts", "Post Moderation"], ["users", "Manage Users"]]} />
-      {tab === "stats" && <Stats />}
-      {tab === "tutors" && <Tutors />}
-      {tab === "posts" && <Posts />}
-      {tab === "users" && <Users />}
-    </>
+      {posts.length === 0 && <p>No posts in this list.</p>}
+
+      {posts.map((p) => (
+        <div className="admin-simple-card" key={p.id}>
+          <div>
+            <strong>{p.title}</strong>
+            <p>By {p.guardian_name} · {p.student_class} · {p.subject} · {p.area} · ৳{p.salary}</p>
+            <Badge status={p.approval} />
+          </div>
+          <div>
+            {p.approval !== "APPROVED" && (
+              <button onClick={() => moderate(p.id, "approve")}>Approve</button>
+            )}
+            {p.approval !== "REMOVED" && (
+              <button onClick={() => moderate(p.id, "remove")}>Remove</button>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
