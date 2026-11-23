@@ -1,0 +1,456 @@
+
+.guardian-dashboard {
+  max-width: 1150px;
+  margin: 0 auto;
+  padding: 30px 15px 55px;
+  color: #1e293b;
+}
+
+.guardian-dashboard-header {
+  padding: 28px 30px;
+  margin-bottom: 25px;
+  border-radius: 18px;
+  color: #fff;
+  background: linear-gradient(120deg, #172554, #2563eb 65%, #7c3aed);
+  box-shadow: 0 12px 28px rgba(37, 99, 235, .15);
+}
+
+.guardian-dashboard-header span,
+.guardian-section-heading span {
+  color: #bfdbfe;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.6px;
+}
+
+.guardian-dashboard-header h3 {
+  margin: 8px 0;
+  color: #fff;
+  font-weight: 800;
+}
+
+.guardian-dashboard-header p {
+  margin: 0;
+  color: #dbeafe;
+  font-size: 13px;
+}
+
+.guardian-dashboard .nav-tabs {
+  gap: 5px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.guardian-dashboard .nav-tabs .nav-link {
+  border: 0;
+  border-radius: 9px;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.guardian-dashboard .nav-tabs .nav-link.active {
+  background: #eef2ff;
+  color: #4338ca;
+}
+
+.guardian-section {
+  padding-top: 15px;
+}
+
+.guardian-section-heading {
+  margin-bottom: 20px;
+}
+
+.guardian-section-heading span {
+  color: #4f46e5;
+}
+
+.guardian-section-heading h4 {
+  margin: 7px 0;
+  color: #172554;
+  font-weight: 800;
+}
+
+.guardian-section-heading p {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.guardian-primary-btn,
+.guardian-view-btn,
+.guardian-edit-btn,
+.guardian-delete-btn,
+.guardian-cancel-btn,
+.guardian-accept-btn,
+.guardian-reject-btn {
+  min-height: 37px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 750;
+  cursor: pointer;
+  transition: .2s ease;
+}
+
+.guardian-primary-btn {
+  color: #fff;
+  background: linear-gradient(110deg, #2563eb, #4f46e5);
+}
+
+.guardian-primary-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(79, 70, 229, .18);
+}
+
+.guardian-new-post {
+  margin-bottom: 20px;
+}
+
+.guardian-form-card {
+  padding: 25px;
+  margin-bottom: 25px;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 7px 24px rgba(30, 55, 100, .05);
+}
+
+.guardian-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px;
+}
+
+.guardian-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.guardian-field-full {
+  grid-column: 1 / -1;
+}
+
+.guardian-field label,
+.guardian-review-form label {
+  color: #334155;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.guardian-field input,
+.guardian-field textarea,
+.guardian-review-form input,
+.guardian-review-form select {
+  width: 100%;
+  min-height: 43px;
+  padding: 10px 12px;
+  border: 1px solid #dbe3f0;
+  border-radius: 9px;
+  outline: none;
+  background: #f8faff;
+  color: #1e293b;
+  font-size: 13px;
+}
+
+.guardian-field input:focus,
+.guardian-field textarea:focus,
+.guardian-review-form input:focus,
+.guardian-review-form select:focus {
+  border-color: #6366f1;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, .1);
+}
+
+.guardian-form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.guardian-cancel-btn {
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #475569;
+}
+
+.guardian-post-grid,
+.guardian-hired-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.guardian-post-card,
+.guardian-hired-card {
+  min-width: 0;
+  padding: 21px;
+  border: 1px solid #e5eaf3;
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 6px 20px rgba(30, 55, 100, .05);
+  transition: .2s ease;
+}
+
+.guardian-post-card:hover,
+.guardian-hired-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(30, 55, 100, .09);
+}
+
+.guardian-post-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.guardian-card-label {
+  color: #6366f1;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+}
+
+.guardian-post-header h5,
+.guardian-hired-info h5 {
+  margin: 6px 0 12px;
+  color: #172554;
+  font-size: 17px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.guardian-statuses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.guardian-statuses .badge {
+  padding: 6px 9px;
+  border-radius: 20px;
+  font-size: 9px;
+}
+
+.guardian-post-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 15px 0;
+}
+
+.guardian-post-details span {
+  padding: 7px 9px;
+  border-radius: 7px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 11px;
+}
+
+.guardian-post-actions,
+.guardian-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding-top: 13px;
+  border-top: 1px solid #edf1f7;
+}
+
+.guardian-view-btn {
+  background: #eef2ff;
+  color: #4338ca;
+}
+
+.guardian-edit-btn {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.guardian-delete-btn,
+.guardian-reject-btn {
+  background: #fff1f2;
+  color: #be123c;
+}
+
+.guardian-application-area {
+  padding: 15px;
+  margin-top: 15px;
+  border-radius: 10px;
+  background: #f8faff;
+}
+
+.guardian-application-area h6 {
+  color: #172554;
+  font-weight: 800;
+}
+
+.guardian-application-card {
+  padding: 13px;
+  margin-top: 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.guardian-application-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.guardian-application-card p {
+  margin: 8px 0;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.guardian-accept-btn {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.guardian-contact {
+  color: #15803d !important;
+  font-weight: 700;
+}
+
+.guardian-message {
+  padding: 9px;
+  border-radius: 8px;
+  background: #f8fafc;
+  font-size: 12px;
+}
+
+.guardian-hired-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.guardian-tutor-avatar {
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: #fff;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.guardian-hired-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.guardian-hired-info h5 {
+  margin-bottom: 5px;
+}
+
+.guardian-hired-info p {
+  margin: 5px 0;
+  color: #64748b;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.guardian-reviewed {
+  padding: 10px;
+  margin-top: 13px;
+  border-radius: 8px;
+  background: #dcfce7;
+  color: #166534;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.guardian-review-form {
+  display: grid;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.guardian-review-form .guardian-primary-btn {
+  margin-top: 5px;
+}
+
+.guardian-empty {
+  padding: 35px 20px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 14px;
+  background: #f8faff;
+  text-align: center;
+}
+
+.guardian-empty h5 {
+  color: #172554;
+  font-weight: 800;
+}
+
+.guardian-empty p,
+.guardian-muted {
+  color: #64748b;
+  font-size: 13px;
+}
+
+@media (max-width: 750px) {
+  .guardian-post-grid,
+  .guardian-hired-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 550px) {
+  .guardian-dashboard {
+    padding: 20px 12px 35px;
+  }
+
+  .guardian-dashboard-header {
+    padding: 22px 19px;
+  }
+
+  .guardian-dashboard .nav-tabs {
+    flex-wrap: wrap;
+  }
+
+  .guardian-form-card {
+    padding: 17px;
+  }
+
+  .guardian-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .guardian-field-full {
+    grid-column: auto;
+  }
+
+  .guardian-post-card,
+  .guardian-hired-card {
+    padding: 16px;
+  }
+
+  .guardian-post-header {
+    flex-direction: column;
+  }
+
+  .guardian-hired-card {
+    gap: 10px;
+  }
+
+  .guardian-form-actions {
+    flex-direction: column;
+  }
+
+  .guardian-form-actions button {
+    width: 100%;
+  }
+}
